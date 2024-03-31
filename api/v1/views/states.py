@@ -4,30 +4,34 @@ from api.v1.views import app_views
 from models import storage
 from models.state import State
 from flask import jsonify, abort, request
-import json
-
-state_objects = storage.all("State")
 
 
 @app_views.route("/states", methods=["GET"], strict_slashes=False)
-@app_views.route("/states/<state_id>", methods=["GET"], strict_slashes=False)
-def get_state(state_id=None):
+def all_states():
     """
-        Gets a specific State object by its ID. or it
-        retrieves all State objects if no id is passed.
+        retrieves all State objects.
+    :return: The json representation of states.
+    """
+    states = []
+    state_objects = storage.all("State")
+    for obj in state_objects.values():
+        states.append(obj.to_dict())
 
+    return jsonify(states)
+
+
+@app_views.route("/states/<state_id>", methods=["GET"], strict_slashes=False)
+def get_state(state_id):
+    """
+        Gets a specific State object by its ID.
     :return: The json representation a states based on its id.
              if id not found raises a 400 error.
     """
-    states = []
-    for obj in state_objects.values():
-        states.append(obj.to_dict())
-    if state_id is not None:
-        for state in states:
-            if state["id"] == state_id:
-                return jsonify(state)
+    state = storage.get('State', str(state_id))
+    if state is None:
         abort(404)
-    return jsonify(states)
+
+    return jsonify(state)
 
 
 @app_views.route('/states/<state_id>', methods=['DELETE'],
