@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 """ This is the Blueprint model """
 from flask import Blueprint
 

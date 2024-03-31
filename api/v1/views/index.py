@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 """ This is Basic routes """
 from api.v1.views import app_views
 from flask import jsonify
