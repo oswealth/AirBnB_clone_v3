@@ -21,12 +21,12 @@ def count():
         :return: A json representation of all objs
     """
     all_stats = {
-        "amenities": storage.close("Amenity"),
-        "cities": storage.close("City"),
-        "places": storage.close("Place"),
-        "reviews": storage.close("Review"),
-        "states": storage.close("State"),
-        "users": storage.close("User")
+        "amenities": storage.count("Amenity"),
+        "cities": storage.count("City"),
+        "places": storage.count("Place"),
+        "reviews": storage.count("Review"),
+        "states": storage.count("State"),
+        "users": storage.count("User")
     }
 
     return jsonify(all_stats)
