@@ -1,25 +1,29 @@
 #!/usr/bin/python3
 """places_amenities.py"""
+import os
 from api.v1.views import app_views
 from flask import abort, jsonify, request
 from models import storage
 from models.amenity import Amenity
 from models.place import Place
+from flasgger.utils import swag_from
 
 
 @app_views.route('/places/<string:place_id>/amenities',
                  methods=['GET'], strict_slashes=False)
+@swag_from('documentation/place_amenity/get_id.yml', methods=['GET'])
 def get_amenities(place_id):
     """Retrieves the list of all Amenity objects of a Place"""
     place = storage.get(Place, place_id)
     if place is None:
         abort(404)
-    amenities = [obj.to_dict() for obj in place.amenities]
+    amenities = [amenity.to_dict() for amenity in place.amenities]
     return jsonify(amenities)
 
 
 @app_views.route('/places/<string:place_id>/amenities/<string:amenity_id>',
                  methods=['DELETE'], strict_slashes=False)
+@swag_from('documentation/place_amenity/delete.yml', methods=['DELETE'])
 def delete_amenity(place_id, amenity_id):
     """Deletes an Amenity object from a Place"""
     place = storage.get(Place, place_id)
@@ -37,6 +41,7 @@ def delete_amenity(place_id, amenity_id):
 
 @app_views.route('/places/<string:place_id>/amenities/<string:amenity_id>',
                  methods=['POST'], strict_slashes=False)
+@swag_from('documentation/place_amenity/post.yml', methods=['POST'])
 def post_amenity(place_id, amenity_id):
     """Links an Amenity object to a Place"""
     place = storage.get(Place, place_id)
