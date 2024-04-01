@@ -78,7 +78,8 @@ def create_amenity():
     return response
 
 
-@app_views.route('/amenities/<amenity_id>', methods=['PUT'], strict_slashes=False)
+@app_views.route('/amenities/<amenity_id>', methods=['PUT'],
+                 strict_slashes=False)
 def update_amenity(amenity_id=None):
     """
         Updates a specific Amenity object based on its ID.
