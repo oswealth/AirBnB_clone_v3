@@ -103,3 +103,44 @@ def PUT_place(place_id):
     place.save()
     storage.close()
     return jsonify(place.to_dict()), 200
+
+
+@app_views.route('/places_search', methods=['POST'], strict_slashes=False)
+def places_search():
+    """
+    Retrieves all Place objects on the JSON in the body of the request.
+    """
+    body = request.get_json()
+    if body is None:
+        abort(400, "Not a JSON")
+
+    if not body or all(not body.get(key)
+                       for key in ['states', 'cities', 'amenities']):
+        places = storage.all('Place').values()
+        return jsonify([place.to_dict() for place in places])
+
+    places = set()
+
+    # Add Places from states
+    if body.get('states'):
+        for state_id in body.get('states'):
+            state = storage.get('State', state_id)
+            if state:
+                for city in state.cities:
+                    places.update(city.places)
+
+    # Add Places from cities
+    if body.get('cities'):
+        for city_id in body.get('cities'):
+            city = storage.get('City', city_id)
+            if city:
+                places.update(city.places)
+
+    if body.get('amenities'):
+        amenities = [storage.get('Amenity', amenity_id)
+                     for amenity_id in body.get('amenities')]
+        places = {place for place in places
+                  if all(amenity in place.amenities
+                         for amenity in amenities)}
+
+    return jsonify([place.to_dict() for place in places])
