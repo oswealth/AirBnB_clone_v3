@@ -26,4 +26,12 @@ class User(BaseModel, Base):
 
     def __init__(self, *args, **kwargs):
         """initializes user"""
+        if 'password' in kwargs:
+            kwargs['password'] =
+            hashlib.md5(kwargs['password'].encode()).hexdigest()
         super().__init__(*args, **kwargs)
+
+    def to_dict(self, save_to_disk=False):
+        """Converts the object to a dictionary"""
+        user_dict = super().to_dict(save_to_disk=save_to_disk)
+        return user_dict
